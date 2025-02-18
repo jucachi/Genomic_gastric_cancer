@@ -1,0 +1,236 @@
+---
+title: "gastric_cancer"
+author: "junior"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+You can add options to executable code like this
+
+```{r}
+# Packages
+pacman::p_load(rio,
+               here,
+               rfextras,
+               reportfactory,
+               tidyverse,
+               ggcorrplot,
+               ggsci,
+               ggpubr,
+               ggfortify,
+               ggbiplot,
+               finalfit,
+               gtsummary,
+               flextable,
+               broom,
+               performance,
+               lmtest, 
+               stats,
+               Rtsne,
+               FactoMineR, 
+               factoextra,
+               corrplot,
+               grateful,
+               MatchIt)
+
+# My function scripts
+rfextras::load_scripts()
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+data <- import(here("data_gastric_cancer", "data.tsv"))
+```
+
+```{r}
+# Make my gtsummary theme
+my_theme <-
+  list(
+    "pkgwide-fn:pvalue_fun" = function(x) style_pvalue(x, digits = 2),
+    "pkgwide-fn:prependpvalue_fun" = function(x) style_pvalue(x, digits = 2, prepend_p = TRUE),
+
+    "tbl_summary-str:continuous_stat" = "{median} ({p25}, {p75})",
+    "tbl_summary-str:categorical_stat" = "{n} ({p}%)",
+    
+    "tbl_summary-fn:percent_fun" = function(x) style_number(x, digits = 1, scale = 100),
+    
+    "tbl_summary-arg:missing" = "no"
+  )
+
+# Combine themes
+set_gtsummary_theme(my_theme, theme_gtsummary_compact())
+theme_gtsummary_language(language = "en")
+```
+
+```{r}
+data_gc_1 <- data_gastric_cancer |>
+  mutate(age = ff_label(age, "Age (years)"), ###
+
+         age.c = case_when(age <= 64 ~ "< 65",
+                            age > 64 ~ ">= 65") |>
+           fct_relevel("< 65", ">= 65") |>
+           ff_label("Age (years)"),
+
+         sex = factor(sex) |> ###
+           fct_recode("Female" = "female",
+                      "Male" = "male") |>
+           fct_relevel("Female", "Male") |>
+           ff_label("Sex"),
+         microsatellite.status = factor(microsatellite.status) |> ###
+           fct_recode("MS-Stable" = "MS-Stable",
+                      "MSI-High" = "MSI-High") |>
+           fct_relevel("MS-Stable", "MSI-High") |>
+           ff_label("Microsatellite.status"),
+
+         SES = factor(SES) |> ####
+           fct_recode("High/medium" = "High/medium",
+                      "Low" = "low") |>
+           fct_relevel("High/medium", "Low") |>
+           ff_label("SES"),
+
+         location.of.tumor = factor(location.of.tumor) |> #
+           fct_recode("Body- Antrum" = "Body- Antrum",
+                      "Antrum" = "Antrum",
+                      "Body" = "Body",
+                      "Fundus" = "Fundus") |>
+           fct_relevel("Body- Antrum",
+                       "Antrum",
+                       "Body",
+                       "Fundus") |>
+           ff_label("Location.of.tumor"),
+         Lauren.classification = factor(Lauren.classification) |> #
+           fct_recode("Mixed" = "Mixed",
+                      "Intestinal" = "Intestinal",
+                      "Diffuse" = "Diffuse") |>
+           fct_relevel("Mixed",
+                       "Intestinal",
+                       "Diffuse") |>
+           ff_label("Lauren.classification"),
+           
+            Borrmann.classification = factor(Borrmann.classification)|>
+            ff_label("Borrmann.classification"),
+         Borrmann.classification.c = factor(Borrmann.classification.c)|>
+            ff_label("Borrmann.classification"),
+         
+                  clinical.stage = factor(clinical.stage)|>
+           ff_label("Clinical.stage"),
+         clinical.stage.c = factor(clinical.stage.c)|>
+           ff_label("Clinical.stage"),
+         tumor.size = ff_label(tumor.size, "Tumor size (mm)"),
+         albumin = ff_label(albumin, "Albumin (g/dL)"),
+         hemoglobin = ff_label(hemoglobin, "Hemoglobin (g/dL)"),
+         burden = ff_label(burden, "Tumor mutational burdem (Muts/Mb)")
+        )
+```
+
+```{r}
+## Case control def
+data_gc_1 <- data_gc_1 |> mutate(
+  cc = case_when(
+  SES == "Low" ~ "case",
+  SES == "High/medium" ~ "control")
+  )
+```
+
+```{r}
+data_gc_2 <- data_gc_1  |>
+  select(# Demographics characteristics
+         age, age.c, sex, 
+         
+         # Clinicopathological characteristics
+         albumin, hemoglobin, tumor.size, Lauren.classification, Borrmann.classification,
+         Borrmann.classification.c,location.of.tumor, clinical.stage, clinical.stage.c,
+         
+         # Genomic characteristics
+         microsatellite.status, burden, 
+         # Socioeconomic status
+         SES
+         )
+```
+
+# Produce outputs
+
+## Table 1. Demographics and clinical characteristics of patients
+
+```{r}
+# Demographics characteristics and history
+tbl_1.1 <- data_gc_2 |>
+  tbl_summary(
+    include = c(
+      age:burden
+    ),
+    by = SES,
+    percent = "column",
+    digits = list(all_continuous() ~ c(1, 1))
+  ) |>
+  add_overall() |>
+  add_p() |>
+  bold_p(t = 0.05) |>
+  modify_header(all_stat_cols() ~ "**{level}** (n = {n})",
+                stat_0 = "**All patients** (n = {N})",
+                #stat_1 = "**High/medium** (N = {N})",
+                #stat_2 = "**Low** (N = {N})",
+                p.value = "**p value**",
+  ) |>
+  modify_spanning_header(all_stat_cols(stat_0 = FALSE) ~ "**Socioeconomic status**") |>
+  modify_caption("**Table 1**. Comparison of clinopathological characteristics between GC whith LSES and MHSES")
+# Stack tables
+  group_header = c(
+    "Demographics characteristics",
+    "clinopathological characteristics",
+    "Genomic characteristics"
+  )
+  quiet = TRUE
+
+
+
+# View
+tbl_1.1
+```
+
+# Save outputs
+
+```{r}
+table_1 <- as_flex_table(tbl_1.1)
+
+# Save tables
+save_as_docx(tbl_1.1, path = "Table_1.docx", align = "center")
+
+```
+
+# Creating waterfall plot (Genomic)
+
+## Installing and loading GenVisR
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("GenVisR")
+
+library(GenVisR)
+```
+
+```{r}
+# 
+peru <- peru1[,c("ID", "gene", "change", "effect")]
+colnames(peru) <- c("sample", "gene", "amino.acid.change", "mutation")
+
+hierarchyDFper <- data.frame("mutation"=c(mutper$mutation), "color"=c(mutper$color))
+Waterfall.out <- Waterfall(peru, mutationHierarchy= hierarchyDFper, geneMax = 35)
+drawPlot(Waterfall.out)
+
+```
+
