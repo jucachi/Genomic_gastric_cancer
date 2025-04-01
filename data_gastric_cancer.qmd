@@ -224,13 +224,49 @@ library(GenVisR)
 ```
 
 ```{r}
-# 
-peru <- peru1[,c("ID", "gene", "change", "effect")]
-colnames(peru) <- c("sample", "gene", "amino.acid.change", "mutation")
+library(GenVisR)
+library(data.table)
+```
 
-hierarchyDFper <- data.frame("mutation"=c(mutper$mutation), "color"=c(mutper$color))
-Waterfall.out <- Waterfall(peru, mutationHierarchy= hierarchyDFper, geneMax = 35)
-drawPlot(Waterfall.out)
 
+```{r}
+# creation of the initial plot
+mutationdatalow <- low[, c("ID", "gene", "change", "effect", "burden")]
+setnames(mutationdatalow, c("sample", "gene", "amino.acid.change", "mutation", "mut_burden"))
+colnames(mutationdatalow) <- c("sample", "gene", "amino.acid.change", "mutation", "mut_burden")
+
+hierarchyDFlow <- data.frame("mutation"=c(mutlow_color$mutation), "color"=c(mutlow_color$color))
+
+```
+
+# Adding clinical data
+
+```{r}
+myClinical <- low[, c("ID", "Location of tumor", "Lauren classification", "Sex", "SES")]
+colnames(myClinical) <- c("ID", "Location of tumor", "Lauren classification", "Sex", "SES")
+setnames(myClinical, c("sample", "Location of tumor", "Lauren classification", "Sex", "SES"))
+myClinical$sample <- gsub("^GC(20)+", "", myClinical$sample)
+
+myClinicalColors <- c('Low'='#0F102E', 'High/medium'='#16689E', 'Male'='#DB1515', 'Female'='#D75D20', 
+             'Intestinal'='#37982C', 'Diffuse'='#94B122', 'Mixed'='#F1C917', 'Fundus'='#14E9BE', 
+             'Body'='#19A68A', 'Antrum'='#1F6457', 'Body-Antrum'='#242123')
+
+clinicalData <- Clinical(inputData = myClinical, palette = myClinicalColors, legendColumns = 3)
+```
+
+# Adding a custom mutation burden
+
+```{r}
+burdenlow$sample <- gsub("^GC()+", "", burdenlow$sample)
+mutation_burden  <- as.numeric(burdenlow$burden)
+names(mutation_burden ) <- burdenlow$sample
+```
+
+# Create the waterfall plot
+
+```{r}
+plotData <- Waterfall(mutationdatalow, mutationHierarchy = hierarchyDFlow, clinical = clinicalData, coverage=mutation_burden, plotA = "frequency")
+
+drawPlot(plotData)
 ```
 

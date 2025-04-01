@@ -1,0 +1,31 @@
+ID	sex	SES	age	location of tumor	Borrmann classification	Lauren classification	tumor size	clinical stage	albumin	hemoglobin	microsatellite status	burden	Borrmann classification c	clinical stage c
+GC001	female	High/medium	45	Body- Antrum	III	Mixed	10	III	4.3	11.2	MS-Stable	5	III - IV	III - IV
+GC002	male	low	61	Antrum	III	Intestinal	80	IV	3.99	5.6	MS-Stable	3	III - IV	III - IV
+GC003	male	low	80	Antrum	III	Intestinal	50	III	3.03	5.8	MSI-High	28	III - IV	III - IV
+GC005	male	High/medium	75	Antrum	IV	Intestinal	15	II	4	12.6	MS-Stable	3	III - IV	I - II
+GC006	male	low	80	Antrum	III	Intestinal	35	IV	2.28	5.47	MS-Stable	8	III - IV	III - IV
+GC007	male	low	55	Body	III	Diffuse	12	III	3.27	6.2			III - IV	III - IV
+GC008	female	High/medium	42	Body- Antrum	IV	Diffuse	80	III	4.1	12.7	MS-Stable	3	III - IV	III - IV
+GC009	female	High/medium	79	Body	IV	Diffuse	90	III	3.3	11.2	MS-Stable	3	III - IV	III - IV
+GC010	female	High/medium	46	Body	II	Intestinal	26	IV	6.68	12.2	MS-Stable	3	I - II	III - IV
+GC011	female	High/medium	50	Fundus	IV	Diffuse	48	IV	3.7	6	MS-Stable	0	III - IV	III - IV
+GC012	male	High/medium	46	Antrum	I	Intestinal	37	II	4.5	13.1	MS-Stable	5	I - II	I - II
+GC013	male	low	89	Body	III	Intestinal	30	IV	2.51	5.7	MS-Stable	6	III - IV	III - IV
+GC014	male	low	73	Antrum	III	Mixed	12	III	3.8	5.5	MS-Stable	8	III - IV	III - IV
+GC015	female	low	44	Body	II	Diffuse	40	IV	3.46	10.9	MS-Stable	1	I - II	III - IV
+GC016	female	low	72	Body	I	Intestinal	60	II	2.5	8.9	MS-Stable	1	I - II	I - II
+GC017	female	low	62	Antrum	III	Intestinal	30	IV	3	5.3	MS-Stable	5	III - IV	III - IV
+GC018	male	High/medium	46	Fundus	IV	Diffuse	14	IV	4.1	10.8	MS-Stable	3	III - IV	III - IV
+GC019	female	High/medium	61	Fundus	I	Intestinal	40	IV	4.2	10.3	MS-Stable	3	I - II	III - IV
+GC020	female	low	79	Body	III	Intestinal	12	IV	3.1	7.8	MS-Stable	6	III - IV	III - IV
+GC021	male	High/medium	73	Body	III	Intestinal	72	IV	3.4	10.3	MS-Stable	10	III - IV	III - IV
+GC022	male	low	63	Body	III	Intestinal	7	IV	3.3	10.9	MS-Stable	11	III - IV	III - IV
+GC023	male	low	42	Antrum	IV	Diffuse	13	IV	2.8	11	MS-Stable	1	III - IV	III - IV
+GC024	male	low	43	Antrum	III	Diffuse	15	IV	3	10.3			III - IV	III - IV
+GC025	male	High/medium	78	Body	III	Mixed	35	IV	4.2	12.4	MS-Stable	4	III - IV	III - IV
+GC026	female	low	79	Antrum	III	Intestinal	35	IV	2.43	8.4	MSI-High	35	III - IV	III - IV
+GC027	male	low	52	Antrum	III	Diffuse	50	III	1.59	8.9	MS-Stable	5	III - IV	III - IV
+GC029	female	High/medium	57	Body	III	Intestinal	80	IV	4.2	12.5	MSI-High	32	III - IV	III - IV
+GC030	male	High/medium	81	Antrum	IV	Intestinal	80	IV	2.6	11.3			III - IV	III - IV
+GC031	male	High/medium	77	Fundus	IV	Intestinal	73	IV	4.3	9.9	MS-Stable	11	III - IV	III - IV
+GC032	female	High/medium	72	Antrum	II	Diffuse	25	I	4.1	10.8			I - II	I - II
