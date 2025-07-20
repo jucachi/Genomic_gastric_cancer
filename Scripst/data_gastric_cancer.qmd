@@ -1,8 +1,10 @@
 ---
 title: "gastric_cancer"
 author: "junior"
-format: html
-editor: visual
+format: 
+   html:
+     toc: true
+     code-fold: show
 ---
 
 ## Quarto
@@ -14,65 +16,65 @@ Quarto enables you to weave together content and executable code into a finished
 When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
 ```{r}
-knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+#|label: setup
+#|iinclude: false
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 5,
+  fig.align = "center"
+)
 ```
 
 You can add options to executable code like this
 
 ```{r}
-# Packages
-pacman::p_load(rio,
-               here,
-               rfextras,
-               reportfactory,
-               tidyverse,
-               ggcorrplot,
-               ggsci,
-               ggpubr,
-               ggfortify,
-               ggbiplot,
-               finalfit,
-               gtsummary,
-               flextable,
-               broom,
-               performance,
-               lmtest, 
-               stats,
-               Rtsne,
-               FactoMineR, 
-               factoextra,
-               corrplot,
-               grateful,
-               MatchIt)
-
-# My function scripts
-rfextras::load_scripts()
+pacman::p_load(
+  rio,
+  here,
+  reportfactory,
+  rfextras,
+  tidyverse,
+  ggcorrplot,
+  ggsci,
+  ggpubr,
+  ggbiplot,
+  finalfit,
+  gtsummary,
+  flextable,
+  ftExtra,
+  broom,
+  performance,
+  lmtest,
+  stats,
+  moments,
+  nortest,
+  epiDisplay,
+  car,
+  Rtsne,
+  factoextra,
+  corrplot,
+  grateful,
+  patchwork,
+  officer,
+  janitor,
+  knitr,
+  dplyr,
+  survival,
+  ggplot2,
+  tibble,
+  officer,
+  stringr
+)
 ```
 
 The `echo: false` option disables the printing of code (only output is displayed).
 
 ```{r}
-data <- import(here("data_gastric_cancer", "data.tsv"))
-```
-
-```{r}
-# Make my gtsummary theme
-my_theme <-
-  list(
-    "pkgwide-fn:pvalue_fun" = function(x) style_pvalue(x, digits = 2),
-    "pkgwide-fn:prependpvalue_fun" = function(x) style_pvalue(x, digits = 2, prepend_p = TRUE),
-
-    "tbl_summary-str:continuous_stat" = "{median} ({p25}, {p75})",
-    "tbl_summary-str:categorical_stat" = "{n} ({p}%)",
-    
-    "tbl_summary-fn:percent_fun" = function(x) style_number(x, digits = 1, scale = 100),
-    
-    "tbl_summary-arg:missing" = "no"
-  )
-
-# Combine themes
-set_gtsummary_theme(my_theme, theme_gtsummary_compact())
-theme_gtsummary_language(language = "en")
+data_gastric_cancer <- import(here::here("data", "data_gastric_cancer.txt"))
+dim(data_gastric_cancer)
 ```
 
 ```{r}
@@ -89,11 +91,11 @@ data_gc_1 <- data_gastric_cancer |>
                       "Male" = "male") |>
            fct_relevel("Female", "Male") |>
            ff_label("Sex"),
-         microsatellite.status = factor(microsatellite.status) |> ###
+         `microsatellite status` = factor(`microsatellite status`) |> ###
            fct_recode("MS-Stable" = "MS-Stable",
                       "MSI-High" = "MSI-High") |>
            fct_relevel("MS-Stable", "MSI-High") |>
-           ff_label("Microsatellite.status"),
+           ff_label("Microsatellite status"),
 
          SES = factor(SES) |> ####
            fct_recode("High/medium" = "High/medium",
@@ -101,7 +103,7 @@ data_gc_1 <- data_gastric_cancer |>
            fct_relevel("High/medium", "Low") |>
            ff_label("SES"),
 
-         location.of.tumor = factor(location.of.tumor) |> #
+         `location of tumor` = factor(`location of tumor`) |> #
            fct_recode("Body- Antrum" = "Body- Antrum",
                       "Antrum" = "Antrum",
                       "Body" = "Body",
@@ -110,30 +112,30 @@ data_gc_1 <- data_gastric_cancer |>
                        "Antrum",
                        "Body",
                        "Fundus") |>
-           ff_label("Location.of.tumor"),
-         Lauren.classification = factor(Lauren.classification) |> #
+           ff_label("Location of tumor"),
+         `Lauren classification` = factor(`Lauren classification`) |> #
            fct_recode("Mixed" = "Mixed",
                       "Intestinal" = "Intestinal",
                       "Diffuse" = "Diffuse") |>
            fct_relevel("Mixed",
                        "Intestinal",
                        "Diffuse") |>
-           ff_label("Lauren.classification"),
+           ff_label("Lauren classification"),
            
-            Borrmann.classification = factor(Borrmann.classification)|>
-            ff_label("Borrmann.classification"),
-         Borrmann.classification.c = factor(Borrmann.classification.c)|>
-            ff_label("Borrmann.classification"),
+            `Borrmann classification` = factor(`Borrmann classification`)|>
+            ff_label("Borrmann classification"),
+         `Borrmann classification c` = factor(`Borrmann classification c`)|>
+            ff_label("Borrmann classification c"),
          
-                  clinical.stage = factor(clinical.stage)|>
-           ff_label("Clinical.stage"),
-         clinical.stage.c = factor(clinical.stage.c)|>
-           ff_label("Clinical.stage"),
-         tumor.size = ff_label(tumor.size, "Tumor size (mm)"),
+                  `clinical stage` = factor(`clinical stage`)|>
+           ff_label("Clinical stage"),
+         `clinical stage c` = factor(`clinical stage c`)|>
+           ff_label("Clinical stage c"),
+         `tumor size` = ff_label(`tumor size`, "Tumor size (mm)"),
          albumin = ff_label(albumin, "Albumin (g/dL)"),
          hemoglobin = ff_label(hemoglobin, "Hemoglobin (g/dL)"),
          burden = ff_label(burden, "Tumor mutational burdem (Muts/Mb)")
-        )
+  )
 ```
 
 ```{r}
@@ -142,24 +144,29 @@ data_gc_1 <- data_gc_1 |> mutate(
   cc = case_when(
   SES == "Low" ~ "case",
   SES == "High/medium" ~ "control")
+)
+```
+
+
+```{r}
+data_gc_2 <- data_gc_1 |>
+  dplyr::select(
+    # Demographics characteristics
+    age, age.c, sex, 
+    
+    # Clinicopathological characteristics
+    albumin, hemoglobin, `tumor size`, `Lauren classification`, 
+    `Borrmann classification`, `Borrmann classification c`, `location of tumor`,
+    `clinical stage`, `clinical stage c`,
+    
+    # Genomic characteristics
+    `microsatellite status`, burden, 
+    
+    # Socioeconomic status
+    SES
   )
 ```
 
-```{r}
-data_gc_2 <- data_gc_1  |>
-  select(# Demographics characteristics
-         age, age.c, sex, 
-         
-         # Clinicopathological characteristics
-         albumin, hemoglobin, tumor.size, Lauren.classification, Borrmann.classification,
-         Borrmann.classification.c,location.of.tumor, clinical.stage, clinical.stage.c,
-         
-         # Genomic characteristics
-         microsatellite.status, burden, 
-         # Socioeconomic status
-         SES
-         )
-```
 
 # Produce outputs
 
@@ -204,12 +211,13 @@ tbl_1.1
 # Save outputs
 
 ```{r}
-table_1 <- as_flex_table(tbl_1.1)
-
-# Save tables
-save_as_docx(tbl_1.1, path = "Table_1.docx", align = "center")
-
+tbl_1.1 <- gtsummary::as_flex_table(tbl_1.1)
+save_as_docx(
+  tbl_1.1,
+  align = "center",
+  path = here("Outputs", "Table_1.1.docx"))
 ```
+
 
 # Creating waterfall plot (Genomic)
 
@@ -227,7 +235,6 @@ library(GenVisR)
 library(GenVisR)
 library(data.table)
 ```
-
 
 ```{r}
 # creation of the initial plot
@@ -269,4 +276,3 @@ plotData <- Waterfall(mutationdatalow, mutationHierarchy = hierarchyDFlow, clini
 
 drawPlot(plotData)
 ```
-
